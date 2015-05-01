@@ -8,9 +8,15 @@ import binascii
 #Constants for the commands a wavtrigger understands
 
 # Reading data back from a WavTrigger
+# Firmware version
 _WT_GET_VERSION = bytearray([0xF0,0xAA,0x05,0x01,0x55])
+# Number of polyphonic voices and number of tracks on sd-card
 _WT_GET_SYS_INFO =  bytearray([0xF0,0xAA,0x05,0x02,0x55])
+
+# List of currently playing tracks
 _WT_GET_STATUS =  bytearray([0xF0,0xAA,0x05,0x07,0x55])
+# Timeout when waiting for the data from the Get-Status command
+_WT_GET_STATUS_TIMEOUT = 0.25
 
 # Playing individual tracks
 _WT_TRACK_SOLO = bytearray([0xF0,0xAA,0x08,0x03,0x00,0x00,0x00,0x55])
@@ -38,6 +44,7 @@ _WT_SAMPLERATE = bytearray([0xF0,0xAA,0x07,0x0C,0x00,0x00,0x55])
 _WT_AMP_POWER = bytearray([0xF0,0xAA,0x06,0x09,0x00,0x55])
 
 
+
 class WavTrigger(object):
     """
     A controller for a RobertSonics WavTrigger
@@ -61,6 +68,13 @@ class WavTrigger(object):
         if self._wt.isOpen():
             self.stopAll()
             self._wt.close()
+
+    def isOpen(self):
+        """
+        Returns True if a serial connection to the WavTrigger is established,
+        returns False if the device was closed
+        """
+        return self._wt.isOpen()
 
     @property
     def version(self):
@@ -133,13 +147,42 @@ class WavTrigger(object):
     def resumeAll(self):
         self._wt.write(_WT_RESUME_ALL)
 
+    def masterGain(self,gain):
+        """
+        Sets the gain for the WavTrigger output
+        """
+        if gain<-70 or gain>10:
+            raise ValueError('Gain argument range is from -70 to +10') 
+        g=_WT_VOLUME
+        g[4],g[5]=self._intToLsb(gain)
+        print binascii.hexlify(g)
+        self._wt.write(g)
+
+    def trackGain(self,gain):
+        """
+        Sets the gain for the WavTrigger output
+        """
+        if gain<-70 or gain>10:
+            raise ValueError('Gain argument range is from -70 to +10') 
+        g=_WT_TRACK_VOLUME
+        g[4],g[5]=self._intToLsb(track)
+        g[6],g[7]=self._intToLsb(gain)
+        print binascii.hexlify(g)
+        self._wt.write(g)
+
     def masterVolume(self,volume):
+        """
+        Sets the volume for the WavTrigger output
+        """
         vol=_WT_VOLUME
         vol[4],vol[5]=self._intToLsb(self._volumeToDb(volume))
         print binascii.hexlify(vol)
         self._wt.write(vol)
 
     def trackVolume(self,track,volume):
+        """
+        Sets tjhe volume for a single track
+        """
         tvol=_WT_TRACK_VOLUME
         tvol[4],tvol[5]=self._intToLsb(track)
         tvol[6],tvol[7]=self._intToLsb(self._volumeToDb(volume))
@@ -175,13 +218,34 @@ class WavTrigger(object):
         self._wt.write(f) 
 
     def playing(self):
+        """ 
+        Gets a list of tracks currently playing on the WavTrigger.
+        If not tracks are playing we return the empty list.
+        If there was a problem with the returned data from the device
+        we return None
+        """
         self._wt.write(_WT_GET_STATUS)
-        time.sleep(0.25)
-        n=self._wt.inWaiting()
-        print n
-        r=self._wt.read(n)
-        print binascii.hexlify(r)
-
+        header=self._wt.read(4)
+        print binascii.hexlify(header)
+        if len(header)<4:
+            self._wt.flushInput()
+            return None
+        if header[:2]!='\xF0\xAA' or header[3]!='\x83':
+            self._wt.flushInput()
+            return None
+        trackLen=ord(header[2])-4
+        t=self._wt.read(trackLen)
+        if len(t)!=trackLen:
+            self._wt.flushInput()
+            return None
+        if t[-1]!='\x55':
+            return None
+        t=t[:-1]
+        tracks=[t[i:i+2] for i  in range(0, len(t), 2)]
+        trackList=[]
+        for i in range(len(tracks)):
+            trackList.append(self._lsbToInt(tracks[i]))
+        return trackList 
 
     def _isValidTrackNumber(self,track):
         if track>0 and track<1000:
@@ -210,12 +274,8 @@ class WavTrigger(object):
 
     def _volumeToDb(self, vol):
         if vol<0 or vol>100:
-            raise ValueError('Volume level invalid : '+str(vol))
-        if vol==0:
-            return -70
-        if vol==100:
-            return 10
-        return -70+int(vol/1.25)
+            raise ValueError('Volume argument range is from 0 to 100')
+        return -70+int(vol/1.428)
 
     def _getVersion(self):
         """
@@ -228,7 +288,7 @@ class WavTrigger(object):
             return ''
         if(v[:4]!='\xF0\xAA\x19\x81' or v[-1]!='\x55'):
             return ''
-        return str(v[4:-1])
+        return str(v[4:-1]).strip()
 
     def _getSysInfo(self):
         """
@@ -242,7 +302,7 @@ class WavTrigger(object):
         if(v[:4]!='\xF0\xAA\x08\x82' or v[-1]!='\x55'):
             return (0,0)
         return (ord(v[4]),self._lsbToInt(v[5:7]))
-        
+
     def __delete__(self):
         """
         Close the port if we are deleted
