@@ -1,9 +1,14 @@
-import time
-import serial
-import array
-import struct
-import binascii
+"""
+.. module:: rswt
+   :platform: Unix, Windows?
+   :synopsis: A library to control a RobertSonics WavTrigger through a serial port
 
+.. moduleauthor:: Eberhard Fahle <e.fahle@wayoda.org>
+
+"""
+
+import serial
+import struct
 
 #Constants for the commands a wavtrigger understands
 
@@ -43,16 +48,25 @@ _WT_SAMPLERATE = bytearray([0xF0,0xAA,0x07,0x0C,0x00,0x00,0x55])
 # Switching the Power amp on or off (not implemented!)
 _WT_AMP_POWER = bytearray([0xF0,0xAA,0x06,0x09,0x00,0x55])
 
-
-
 class WavTrigger(object):
+    """A controller for a RobertSonics WavTrigger
     """
-    A controller for a RobertSonics WavTrigger
-    """
+
     def __init__(self,device, baud=57600, timeout=5.0):
-        """
-        Opens a serial port to the device and reads the 
-        hardware version info of the WavTrigger.
+        """Open a serial port to the device and read the 
+        hardware version and info from the WavTrigger.
+
+        :param device: The serial port where the WavTrigger is listening.
+        :type device: str
+        :param baud: The baudrate to be used on the port. The value must match
+                     the baudrate set in the init file of the WavTrigger. The default 
+                     value (57600) seems to be fast enough for all purposes
+        :type baud: int
+        :param timeout: A timeout for reading and writing on the port. 
+                        The default (5.0 seconds) is plenty. If this limit is reached
+                        you can be quite sure to have lost the connection.
+        :type timeout: float
+
         """
         self._wt=serial.Serial(port=device, baudrate=baud)
         self._wt.timeout=timeout
@@ -61,172 +75,310 @@ class WavTrigger(object):
             self._voices,self._tracks=self._getSysInfo()
 
     def close(self):
-        """
-        Stops all playing track and closes the port to the WavTrigger.
-        It's save to call this method even if the port is already closed
+        """Stop all playing tracks and closes the port to the WavTrigger.
+        It's save to call this method repeatedly even if the port is already closed.
+
         """
         if self._wt.isOpen():
             self.stopAll()
             self._wt.close()
 
     def isOpen(self):
-        """
-        Returns True if a serial connection to the WavTrigger is established,
-        returns False if the device was closed
+        """Test if a serial connection to the WavTrigger is established.
+
+        :returns: bool -- True if the device is open, False otherwise
+
         """
         return self._wt.isOpen()
 
     @property
     def version(self):
-        """
-        Gets the version string of the WavTrigger firmeware
+        """Get the version string of the WavTrigger firmeware
+
+        :returns: str -- A string with the firmware version that runs on the WavTrigger
+    
         """
         return self._version
+
     @property
     def voices(self):
-        """
-        Gets the number of polyphonic voices the WavTrigger can play
+        """Get the number of polyphonic voices the WavTrigger can play
+
+        :returns: int -- The number of voices that can be played simultanously
+
         """
         return self._voices
 
     @property
     def tracks(self):
-        """
-        Gets the number of tracks stored on the WavTrigger
+        """Get the number of tracks stored on SD-Card of the WavTrigger
+
+        :returns: int -- The total number of tracks the WavTrigger found on the SD-Card.
+
         """
         return self._tracks
 
     def play(self,track):
+        """Play a track
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int
+
+        """
         if self._isValidTrackNumber(track):
             t=self._setTrackForCommand(_WT_TRACK_PLAY,track)
-            print binascii.hexlify(t)
             self._wt.write(t)
 
     def solo(self,track):
+        """Play a track solo. Stops all currently playing tracks
+        and starts the solo track.
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int
+
+        """
+ 
         if self._isValidTrackNumber(track):
             t=self._setTrackForCommand(_WT_TRACK_SOLO,track)
-            print binascii.hexlify(t)
             self._wt.write(t)
 
-    def stop(self,track):
+    def stop(self,track):        
+        """Stop a playing track.
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int
+
+        """
+ 
         if self._isValidTrackNumber(track):
             t=self._setTrackForCommand(_WT_TRACK_STOP,track)
-            print binascii.hexlify(t)
             self._wt.write(t)
 
     def pause(self,track):
+        """Pause a track. Stops a playing track until 
+        'resume' is called for the track.
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int
+
+        """
+ 
         if self._isValidTrackNumber(track):
             t=self._setTrackForCommand(_WT_TRACK_PAUSE,track)
-            print binascii.hexlify(t)
             self._wt.write(t)
 
-    def resume(self,track):
+    def resume(self,track):        
+        """Resume playing a track that has been paused previously.
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int
+
+        """
+ 
         if self._isValidTrackNumber(track):
             t=self._setTrackForCommand(_WT_TRACK_RESUME,track)
-            print binascii.hexlify(t)
             self._wt.write(t)
 
-    def load(self,track):
+    def load(self,track):        
+        """Load a track into the memory of the WavTrigger and pause it.
+        The track can than be played using the :meth:`resume` or :meth:`resumeAll` commands
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int
+
+        """
+ 
         if self._isValidTrackNumber(track):
             t=self._setTrackForCommand(_WT_TRACK_LOAD,track)
-            print binascii.hexlify(t)
             self._wt.write(t)
 
-    def loop(self,track,status):
+    def loop(self,track):        
+        """Set loop flag for a track. When the track is started it is played 
+        in a loop until it is stopped. But stopping it does not clear the loop flag.
+        If the track is started again, it will still loop. Use :meth:`unLoop` to clear
+        the loop flag
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int
+
+        """
+ 
         if self._isValidTrackNumber(track):
-            if status:
-                t=self._setTrackForCommand(_WT_TRACK_LOOP_ON,track)
-            else:
-                t=self._setTrackForCommand(_WT_TRACK_LOOP_OFF,track)
-            print binascii.hexlify(t)
-            self._wt.write(t)
+            self._wt.write(self._setTrackForCommand(_WT_TRACK_LOOP_ON,track))
 
-    def stopAll(self):
+
+    def unLoop(self,track):        
+        """Clear the loop flag for a track. see :meth:`loop`
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int
+
+        """
+ 
+        if self._isValidTrackNumber(track):
+            self._wt.write(self._setTrackForCommand(_WT_TRACK_LOOP_OFF,track))
+
+    def stopAll(self):        
+        """Stop all playing tracks.
+
+        """
+ 
         self._wt.write(_WT_STOP_ALL)
 
-    def resumeAll(self):
+    def resumeAll(self):        
+        """Restart all resumed tracks. 
+
+        """
         self._wt.write(_WT_RESUME_ALL)
 
     def masterGain(self,gain):
         """
-        Sets the gain for the WavTrigger output
+        Sets the gain for the WavTrigger output.
+
+        :param gain: Gain for the WavTrigger output.
+                     The valid range for the gain argument is -70..+10  
+        :type gain: int
+
         """
         if gain<-70 or gain>10:
             raise ValueError('Gain argument range is from -70 to +10') 
         g=_WT_VOLUME
         g[4],g[5]=self._intToLsb(gain)
-        print binascii.hexlify(g)
         self._wt.write(g)
 
-    def trackGain(self,gain):
-        """
-        Sets the gain for the WavTrigger output
+    def trackGain(self, track, gain):
+        """ Sets the gain for a specific track.
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int                      
+        :param gain: Gain for the WavTrigger output.
+                     The valid range for the gain argument is -70..+10  
+        :type gain: int
+
         """
         if gain<-70 or gain>10:
             raise ValueError('Gain argument range is from -70 to +10') 
         g=_WT_TRACK_VOLUME
         g[4],g[5]=self._intToLsb(track)
         g[6],g[7]=self._intToLsb(gain)
-        print binascii.hexlify(g)
         self._wt.write(g)
 
     def masterVolume(self,volume):
-        """
-        Sets the volume for the WavTrigger output
+        """Sets the volume for the WavTrigger output. This method never
+        amplifies the signal as the :meth:`masterGain` does when called
+        with gain values > 0. So you will not get any distorsion in the output.
+        Also most people are used to volume ranges from zero to 100 rather then 
+        a gain value in dB.
+        
+        :param volume: Volume for the WavTrigger output.
+                       The valid range for the volume argument is 0..100  
+        :type gain: int
+
         """
         vol=_WT_VOLUME
         vol[4],vol[5]=self._intToLsb(self._volumeToDb(volume))
-        print binascii.hexlify(vol)
         self._wt.write(vol)
 
-    def trackVolume(self,track,volume):
-        """
-        Sets tjhe volume for a single track
+    def trackVolume(self,track,volume):        
+        """Set the volume for a track. This method never
+        amplifies the track signal as the :meth:`trackGain` does when called
+        with gain values > 0. So you will not get any distorsion in the output.
+        Also most people are used to volume ranges from zero to 100 rather then 
+        a gain value in dB.
+        
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int                      
+        :param volume: Volume for the track.
+                       The valid range for the volume argument is 0..100  
+        :type gain: int
+
         """
         tvol=_WT_TRACK_VOLUME
         tvol[4],tvol[5]=self._intToLsb(track)
         tvol[6],tvol[7]=self._intToLsb(self._volumeToDb(volume))
-        print binascii.hexlify(tvol)
         self._wt.write(tvol)
 
     def pitch(self,offset):
+        """Set an offset for the samplerate that the WavTrigger uses. 
+        A negative offset lowers the tone, a positive offset raises the tone
+        value.
+
+        :param offset: Offset to the samplerate. 
+                       The range of valid offset agrument values is -32767..+32767
+        :type offset: int                      
+ 
+        """
         if offset>32767 :
             offset=32767
         if offset < -32767:
             ofset = -32767
         pitch=_WT_SAMPLERATE
         pitch[4],pitch[5]=self._intToLsb(offset)
-        print binascii.hexlify(pitch)
         self._wt.write(pitch)
 
     def fade(self,track,volume,time):
+        """Fade the track volume from the current volume level to 
+        a lower or higer volume
+
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int                      
+        :param volume: The target volume for the track.
+                       The valid range for the volume argument is 0..100  
+        :type volume: int
+        :param time: The time in milliseconds for the fade from the current
+                     to the target level
+        :type time: int                     
+    
+        """
         f=_WT_FADE
         f[4],f[5]=self._intToLsb(track)
         f[6],f[7]=self._intToLsb(self._volumeToDb(volume))
         f[8],f[9]=self._intToLsb(time)
         f[10]=0x00
-        print binascii.hexlify(f)
         self._wt.write(f) 
 
-    def fadeOut(self,track, time):
+    def fadeOut(self,track, time):        
+        """Fade the track volume from the current volume level to zero,
+        than stop the track.
+    
+        :param track: Number of the track. 
+                      The range of valid tracknumbers is 1..999
+        :type track: int                      
+        :param time: The time in milliseconds for the fade out from the current
+                     to silence
+        :type time: int                     
+    
+        """
         f=_WT_FADE
         f[4],f[5]=self._intToLsb(track)
         f[6],f[7]=self._intToLsb(self._volumeToDb(0))
         f[8],f[9]=self._intToLsb(time)
         f[10]=0x01
-        print binascii.hexlify(f)
         self._wt.write(f) 
 
     def playing(self):
         """ 
-        Gets a list of tracks currently playing on the WavTrigger.
-        If not tracks are playing we return the empty list.
-        If there was a problem with the returned data from the device
-        we return None
+        Get a list of the currently playing tracks on the WavTrigger.
+        
+        :returns: list -- A list with the track numbers currently playing.
+                  If no tracks are playing the empty list is returned.
+                  If there is a problem reading the return value from the 
+                  WavTrigger `None` is returned.
+        
         """
         self._wt.write(_WT_GET_STATUS)
         header=self._wt.read(4)
-        print binascii.hexlify(header)
         if len(header)<4:
             self._wt.flushInput()
             return None
@@ -248,38 +400,40 @@ class WavTrigger(object):
         return trackList 
 
     def _isValidTrackNumber(self,track):
+        """Simple test for valid track numbers
+        """
         if track>0 and track<1000:
             return True
         return False
 
     def _lsbToInt(self,lsbValue):
-        """
-        Convert the track number from 2 bytes in lsb order to an int value
+        """Convert track number from 2 bytes in lsb order to an int value
         """
         return struct.unpack('<h',lsbValue)[0]
 
     def _intToLsb(self,value):
-        """
-        Converts an int value to a 2 byte tuple in lsb order
+        """Convert an int value to a 2 byte tuple in lsb order
         """
         return (value & 0xFF, (value >> 8) & 0xFF)
 
     def _setTrackForCommand(self,cmd,track):
-        """
-        All track commands need a track argument in the data sent
-        to the WavTrigger
+        """All track commands need a track argument in the data sent
+        to the WavTrigger. We update the command data array in place
         """
         cmd[5],cmd[6]=self._intToLsb(track)
         return cmd
 
     def _volumeToDb(self, vol):
+        """Map a volume level of 0..100 to the gain level of -70..0 db
+        which is used by the WavTrigger
+
+        """
         if vol<0 or vol>100:
             raise ValueError('Volume argument range is from 0 to 100')
         return -70+int(vol/1.428)
 
     def _getVersion(self):
-        """
-        Read version number from device
+        """Read version number from device
         """
         if(self._wt.write(_WT_GET_VERSION) != len(_WT_GET_VERSION)):
             return ''
@@ -291,8 +445,8 @@ class WavTrigger(object):
         return str(v[4:-1]).strip()
 
     def _getSysInfo(self):
-        """
-        Read system info from device
+        """Read system info from device. The current firmware reports 
+        the number of polyphonic voice and the number of tracks found on the SD-card.
         """
         if(self._wt.write(_WT_GET_SYS_INFO) != len(_WT_GET_SYS_INFO)):
             return (0,0)
@@ -304,8 +458,7 @@ class WavTrigger(object):
         return (ord(v[4]),self._lsbToInt(v[5:7]))
 
     def __delete__(self):
-        """
-        Close the port if we are deleted
+        """Close the serial port if the class instance goes out of scope.
         """
         self.close()
 
