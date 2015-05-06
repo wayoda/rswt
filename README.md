@@ -18,11 +18,11 @@ The latest official release is always on the [rswt release pages](https://github
 Drop the `rswt.py` file into your code folder and start using it
 
 ```
-import rswt
-
-wt=rswt.WavTrigger('/dev/ttyACM0')
-print(wt.version)
-
+>>> import rswt
+>>> wt=rswt.WavTrigger('/dev/UsbSerial')
+>>> wt.version
+'WAV Trigger v1.10'
+>>> wt.close()
 ```
 
 I will upload the module to [PyPI](https://pypi.python.org/pypi) as soon as I
