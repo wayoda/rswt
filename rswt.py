@@ -3,12 +3,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-
+from os import errno
 import serial
 import struct
 import binascii
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 __author__ = 'Eberhard Fahle'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2015 Eberhard Fahle'
@@ -78,13 +78,10 @@ class WavTrigger(object):
             self._voices,self._tracks=self._getSysInfo()
 
     def close(self):
-        """Stop all playing tracks and close the port to the WavTrigger.
-        It's save to call this method repeatedly even if the port is already closed.
+        """Closes the port to the WavTrigger. Does not stop playing tracks.
 
         """
-        if self._wt.isOpen():
-            self.stopAll()
-            self._wt.close()
+        self._wt.close()
 
     def isOpen(self):
         """Test if a serial connection to the WavTrigger is established.
@@ -375,18 +372,12 @@ class WavTrigger(object):
 
         """
         self._wt.write(_WT_GET_STATUS)
-        header=self._wt.read(4)
-        if len(header)<4:
-            self._wt.flushInput()
-            return None
+        header=self._readFromPort(4)
         if header[:2]!=b'\xF0\xAA' or header[3:4]!=b'\x83':
             self._wt.flushInput()
             return None
-        trackLen=ord(header[2])-4
-        t=self._wt.read(trackLen)
-        if len(t)!=trackLen:
-            self._wt.flushInput()
-            return None
+        trackLen=ord(header[2:3])-4
+        t=self._readFromPort(trackLen)
         if t[-1:]!=b'\x55':
             return None
         t=t[:-1]
@@ -434,9 +425,7 @@ class WavTrigger(object):
         """
         if(self._wt.write(_WT_GET_VERSION) != len(_WT_GET_VERSION)):
             return ''
-        v=self._wt.read(25)
-        if len(v) != 25:
-            return ''
+        v=self._readFromPort(25)
         if(v[:4]!=b'\xF0\xAA\x19\x81' or v[-1:]!=b'\x55'):
             return ''
         vstr=v[4:-1].decode('utf8')
@@ -448,12 +437,20 @@ class WavTrigger(object):
         """
         if(self._wt.write(_WT_GET_SYS_INFO) != len(_WT_GET_SYS_INFO)):
             return (0,0)
-        v=self._wt.read(8)
-        if len(v) != 8:
-            return (0,0)
+        v=self._readFromPort(8)
         if(v[:4]!=b'\xF0\xAA\x08\x82' or v[-1:]!=b'\x55'):
             return (0,0)
         return (ord(v[4:5]),self._lsbToInt(v[5:7]))
+
+    def _readFromPort(self, size):
+        """Read data from the serial port. If the length of the data returned from 
+        the WavTrigger does not match the requested size an OSError is raised 
+        for the timeout condition.
+        """
+        result=self._wt.read(size)
+        if len(result) != size:
+            raise OSError(errno.ETIMEDOUT,"Connection timed out");
+        return result
 
     def __delete__(self):
         """Close the serial port if the class instance goes out of scope.
