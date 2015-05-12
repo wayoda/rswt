@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns="en">
+    <head>
+        <title>rswt.py</title>
+        <meta charset="utf-8" />
+        <meta name="author" content="Eberhard Fahle" />
+        <!-- Enable responsiveness on mobile devices-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+        <link rel="stylesheet" href="http://wayoda.github.io/rswt/theme/css/style.css" type="text/css" />
+
+            <link rel="stylesheet" href="http://wayoda.github.io/rswt/theme/css/github.css" type="text/css" />
+    
+        <link href="http://fonts.googleapis.com/css?family=Gentium+Book Basic:400italic,400,700italic,700" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata&subset=latin-ext' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="container">
+<div id="header">
+    <div id="header-left" >
+        <span class="header-title"><a href="http://wayoda.github.io/rswt/index.html">rswt.py</a></span>
+        </br>
+        <span class="header-description">A python library for the RobertSonics WavTrigger</span>
+    </div>
+    <div id="header-nav">
+        <ul>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/index.html">Home</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/tutorial.html">Tutorial</a></li>
+            <li><a class="sidebar-menu-item active" href="http://wayoda.github.io/rswt/pages/api.html">API</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/faq.html">FAQ</a></li>
+        </ul>
+    </div>
+</div>
+<div class="clear"></div>
+<hr class="hr-top">               <div id="content">
+<div class="page">
+    <div id="page-menu">
+        <ul>
+            <li><a href="#class">WavTrigger objects</a></li>
+            <li><a href="#properties">Properties</a></li>
+            <li><a href="#play">Play</a></li>
+            <li><a href="#gain">Gain</a></li>
+            <li><a href="#effects">Effects</a></li>
+         </ul>
+    </div>
+<h1>rswt API</h1>
+<p>The <code>rswt</code> module exports only a single class : <code>WavTrigger</code></p>
+<h2><a id="class"></a> WavTrigger objects</h2>
+<dl>
+<dt><code>class rswt.WavTrigger(device, timeout=5.0, baud=57600)</code></dt>
+<dd>Create a new WavTrigger object. All parameter should be passed as keyword
+arguments. </dd>
+</dl>
+<ul>
+<li><strong><code>device</code></strong> - name of serial port</li>
+<li><strong><code>timeout</code></strong> - timeout for reading from the serial port</li>
+<li><strong><code>baud</code></strong> - baudrate for the serial port</li>
+</ul>
+<p><strong><em>Raises</em></strong> : <code>OSError</code><br />
+if opening the serial port failed, or reading from the <code>WavTrigger</code> times out</p>
+<h2><a id="properties"></a> WavTrigger properties</h2>
+<dl>
+<dt><code>WavTrigger.version</code></dt>
+<dd>The version striung returned from the device  </dd>
+<dt><code>WavTrigger.voices</code></dt>
+<dd>The number of polyphonic voices the <code>WavTrigger</code>
+supports  </dd>
+<dt><code>WavTrigger.tracks</code></dt>
+<dd>The number of tracks found on the SD-Card  </dd>
+</dl>
+<h2><a id="play"></a> Playing tracks</h2>
+<dl>
+<dt><code>play(track)</code></dt>
+<dd>Play a track from the SD-Card using one of the polyphonic voices of a <code>WavTrigger</code>  </dd>
+<dt><code>solo(track)</code></dt>
+<dd>Play a solo track from the SD-Card. Stops all polyphonic voices and plays the solo.  </dd>
+<dt><code>pause(track)</code></dt>
+<dd>Pause a playing track.  </dd>
+<dt><code>resume(track)</code></dt>
+<dd>Resume a paused track.</dd>
+<dt>`stop(track)</dt>
+<dd>Stop a playing track</dd>
+<dt><code>load(track)</code></dt>
+<dd>load a track into memory and pause it. Tracks loaded with this method can be
+played in sync when started with <code>resumeAll()</code></dd>
+<dt><code>resumeAll()</code></dt>
+<dd>start playing tracks that where loaded into memory with the <code>load(track)</code>
+method.</dd>
+<dt><code>stopAll()</code></dt>
+<dd>stop all playing tracks</dd>
+<dt><code>loop(track)</code></dt>
+<dd>loop the track when playing. The track will play in a loop even if it is
+restarted after a <code>stop(track)</code> or <code>stopAll()</code> command.</dd>
+<dt><code>unLoop(track)</code></dt>
+<dd>stop playing a track in a loop. If the track is playing when <code>unLoop(track)</code>
+is called the track will play to the end and then stop.</dd>
+<dt><code>playing()</code></dt>
+<dd>reads a list of the currently playing tracks from the <code>WavTrigger</code>. If no
+tracks are playing the empty list is returned.  </dd>
+<dt><strong><em>Raises</em></strong> : <code>OSError</code></dt>
+<dd>If the <code>WavTrigger</code> does not return valid data is the timespan set by the timeout an Exception is raised.</dd>
+</dl>
+<h2><a id="gain"></a> Gain/Volume</h2>
+<dl>
+<dt><code>trackVolume(track,volume)</code></dt>
+<dd>set the volume for a track. </dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+<li><code>volume</code> - the new volume setting. The range of valid volume arguments is
+  0..100, resulting in a gain setting from -70dB to 0dB.</li>
+</ul>
+<dl>
+<dt><code>trackGain(track,gain)</code></dt>
+<dd>set gain for a track. </dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+<li><code>gain</code> - the new gain setting. The range of valid gain arguments is -70..+10.
+  Gain values &gt;0 might cause distortion in the output signal.</li>
+</ul>
+<dl>
+<dt><code>masterVolume(volume)</code></dt>
+<dd>set volume for the WavTrigger output signal stage. </dd>
+</dl>
+<ul>
+<li><code>volume</code> - the new volume setting. The range of valid volume arguments is
+  1..100, resulting in a gain setting from -70dB to 0dB.</li>
+</ul>
+<dl>
+<dt><code>masterGain(gain)</code></dt>
+<dd>set the gain for the WavTrigger output signal stage. </dd>
+</dl>
+<ul>
+<li><code>gain</code>  - the new gain setting. The range of valid gain arguments is -70..+10.
+  Gain values &gt;0 might cause distortion in the output signal.</li>
+</ul>
+<h2><a id="effects"></a> Effects</h2>
+<dl>
+<dt><code>fade(track,volume,duration)</code></dt>
+<dd>fade the volume for a track to a new level in the timespan given by <code>duration</code></dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+<li><code>volume</code> - the new volume level for the track. The range of valid volume arguments is
+1..100, resulting in a gain setting from -70dB to 0dB.</li>
+<li><code>duration</code> - the timespan in milliseconds for the fading effect</li>
+</ul>
+<dl>
+<dt><code>fadeOut(track,duration)</code></dt>
+<dd>fade the volume for a track from its current level to zero, than stop the track. </dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+<li><code>duration</code> - the timespan in milliseconds for the fade out</li>
+</ul>
+<dl>
+<dt><code>pitch(offset)</code></dt>
+<dd>change the samplerate for the <code>WavTrigger</code>. </dd>
+</dl>
+<ul>
+<li><code>offset</code> - the offset of the samplerate. Vaild <code>offset</code> values are
+  -32767..32767. Values below 0 cause the output signal to be pitched down. Value greater 0 raise the pitch.  </li>
+</ul>
+</div>
+ 
+            </div>
+<div id="footer">
+     <div class="footer-info-item">
+         <p><span class="bold">Contact </span><a href="https://github.com/wayoda/rswt"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/github-dark-20.png" alt="rswt on Github">rswt Project on Github</a><a href="mailto:e.fahle@wayoda.org"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/mail-dark-20.png" alt="E-Mail">e.fahle@wayoda.org</a></p>
+         <p><span class="bold">rswt </span>Current version: 0.1.0 &ndash; &copy; 2015 Eberhard Fahle</p>
+     </div>
+</div>
+    </div> 
+    </body>
+</html>

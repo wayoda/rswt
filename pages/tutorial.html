@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html xmlns="en">
+    <head>
+        <title>rswt.py</title>
+        <meta charset="utf-8" />
+        <meta name="author" content="Eberhard Fahle" />
+        <!-- Enable responsiveness on mobile devices-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+        <link rel="stylesheet" href="http://wayoda.github.io/rswt/theme/css/style.css" type="text/css" />
+
+            <link rel="stylesheet" href="http://wayoda.github.io/rswt/theme/css/github.css" type="text/css" />
+    
+        <link href="http://fonts.googleapis.com/css?family=Gentium+Book Basic:400italic,400,700italic,700" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata&subset=latin-ext' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="container">
+<div id="header">
+    <div id="header-left" >
+        <span class="header-title"><a href="http://wayoda.github.io/rswt/index.html">rswt.py</a></span>
+        </br>
+        <span class="header-description">A python library for the RobertSonics WavTrigger</span>
+    </div>
+    <div id="header-nav">
+        <ul>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/index.html">Home</a></li>
+            <li><a class="sidebar-menu-item active" href="http://wayoda.github.io/rswt/pages/tutorial.html">Tutorial</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/api.html">API</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/faq.html">FAQ</a></li>
+        </ul>
+    </div>
+</div>
+<div class="clear"></div>
+<hr class="hr-top">               <div id="content">
+<div class="page">
+    <div id="page-menu">
+        <ul>
+            <li><a href="#Hardware">Hardware</a></li>
+            <li><a href="#Connect">Connect</a></li>
+            <li><a href="#Play">Play</a></li>
+            <li><a href="#Volume">Volume</a></li>
+            <li><a href="#Pitch">Pitch</a></li>
+            <li><a href="#Close">Shutting down</a></li>
+         </ul>
+    </div>
+<h1>Tutorial</h1>
+<p>The <code>rswt</code> library has a rather simple api and the method calls don't have any
+sideeffects. They just tell the <code>WavTrigger</code> hardware what to do next or read
+the status message. So the best way to explore the library is to fire up a
+python interpreter session to try out all the commands.  </p>
+<h2><a id="Hardware"></a>Hardware setup</h2>
+<p>The hardware setup for the tutorial is pretty simple. There is the <code>WavTrigger</code>
+board with headers soldered on all connections. I use a <a href="https://www.sparkfun.com/products/9716">SparkFun FTDI Basic
+Breakout</a> rated at <code>5V</code> for the serial
+connection. Any other USB2Serial interface working at <code>5V</code> logic level will
+probably work too. A nice feature of the Sparkfun breakout is that is fits
+directly onto the serial port pins of the <code>WavTrigger</code> board. But the image
+reveals that its a rather fragile setup from the mechanical point of view. For a
+real project you should get an interface with proper mounting screw holes.  </p>
+<p><img alt="Setup" src="../images/setup.png" /></p>
+<p>A little amp/speaker combination proved to be nice for testing. I started out
+with headphones but when the <code>WavTrigger</code> goes into overdrive while testing the
+gain control feature this gets a bit rough on the ears.  </p>
+<h2>Software setup</h2>
+<p>For the tutorial the <code>rswt</code> library must be installed on your system
+python-path, or you download the <code>rswt.py</code> file from github and work from the
+directory that file is in. </p>
+<p>Start up the python interpreter and import the library </p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span><span class="kn">import</span> <span class="nn">rswt</span>
+</pre></div>
+
+
+<p>This should not raise an error unless there is a problem with library installation.  </p>
+<h2><a id="Connect"></a>Connect to the WavTrigger</h2>
+<p>This is the simplest way to establishing a serial connection to the
+<code>WavTrigger</code>. </p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">rswt</span> <span class="kn">import</span> <span class="n">WavTrigger</span> <span class="n">wt</span><span class="o">=</span><span class="n">rswt</span><span class="o">.</span><span class="n">WavTrigger</span><span class="p">(</span><span class="s">&#39;/dev/ttyUSB0&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>The class <code>WavTrigger</code> is imported and a new instance of that class is created.
+The serial interface to the device will be opened immediately. The parameter
+<code>'/dev/ttyUSB0'</code> is the name of the port. <code>'/dev/ttyUSB0'</code> is a typical portname
+on Unix/Linux. On a windows machine the names take the form of <code>'COM</code>+<code>&lt;number&gt;'</code>.
+If this line of code does not raise an exception you are connected to the
+<code>WavTrigger</code>. Right after opening the port the <code>__init__()</code> method of the class
+reads the the hardware version of the device, the number of polyphonic voices it
+plays and the number of tracks found on the SD-Card. These properties are
+printed to the commandline in the next example.</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">rswt</span> <span class="kn">import</span> <span class="n">WavTrigger</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">=</span><span class="n">rswt</span><span class="o">.</span><span class="n">WavTrigger</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="s">&#39;/dev/ttyUSB0&#39;</span><span class="p">,</span><span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">baud</span><span class="o">=</span><span class="mi">57600</span><span class="p">)</span> <span class="n">wt</span><span class="o">.</span><span class="n">version</span>
+<span class="s">u&#39;WAV Trigger v1.10&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">voices</span>
+<span class="mi">14</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">tracks</span>
+<span class="mi">48</span>
+<span class="o">&gt;&gt;&gt;</span> 
+</pre></div>
+
+
+<p>The <code>__init__()</code> method takes two more arguments. The <code>timeout</code> argument is used
+when data is read from the serial port.The default timeout is set to 5 seconds.
+This gives the USB enough time to handle the read request. If the read takes
+longer there very likely is a problem with the serial port. The <code>WavTrigger</code>
+itself never failed to return is data even when all 14 voices are played
+simultaneously.  If a read operation times out an Exception is raised. It
+doesn't speed up the code if a shorter timeout is used. </p>
+<p>The <code>baud</code> argument is the baudrate to be used. The default value is <code>57600</code>.
+This should only to be changed when a <a href="http://robertsonics.com/wav-trigger-online-user-guide/#chapter6">customized
+wavtrigr.ini-file</a>
+is used.  If the baudrates of the serial port and the rate of the <code>WavTrigger</code>
+do not match the connection attempt will fail. </p>
+<h3>Handling Exceptions</h3>
+<p>Whenever code deals with external hardware you shouold be prepared that things
+will go wrong. The <code>rswt</code> library will raise an exception when that happens.
+Here are a few common errors when tring to connect to a <code>WavTrigger</code></p>
+<p>The name of the serial port is wrong:</p>
+<blockquote>
+<p><code>OSError: [Errno 2] No such file or directory : '/dev/ttyUSB89'</code></p>
+</blockquote>
+<p>The port exists but you have no access to it:</p>
+<blockquote>
+<p><code>OSError: [Errno 13] Permission denied: '/dev/ttyUSB0'</code></p>
+</blockquote>
+<p>The port was opened sucessfully but a read operation timed out:</p>
+<blockquote>
+<p><code>OSError: [Errno 110] Connection timed out</code> </p>
+</blockquote>
+<p>This will happen to you for instance when the power supply of the <code>WavTrigger</code>
+is not plugged in. The serial port interface will write its request without
+errors but the device never answers. </p>
+<p>Once the connection to the <code>WavTrigger</code>is established your code must be prepared
+for situations like an unplugged powersupply or USB-Cable.</p>
+<p>Wrap all calls into the library with a <code>try: .. except: ..</code> block.</p>
+<h2><a id="Play"></a>Playing tracks</h2>
+<p>One major feature of the <code>WavTrigger</code> is that it can play and mix up to 14
+polyphonic tracks. That puts the <code>WavTrigger</code> somewhere in between a 
+audio player device and a musical instrument. </p>
+<h3>Standard audio player mode</h3>
+<p>If you want the <code>WavTrigger</code> to act like a <em>normal</em> audio player that only plays
+a single track at the time you start a track with the <code>solo(track)</code> method.
+<code>solo()</code> will stop all currently playing tracks and start the track given in the
+argument. You can <code>stop()</code>,<code>pause()</code> and <code>resume()</code> a track. Starting a
+different track with <code>solo(otherTrack)</code> while a track is still playing will stop
+the current track and start the new one.</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">rswt</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">=</span><span class="n">rswt</span><span class="o">.</span><span class="n">WavTrigger</span><span class="p">(</span><span class="s">&#39;/dev/ttyUSB0&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="c">#play track 80</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">solo</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">resume</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<h3>Polyphonic mode</h3>
+<p>When tracks are started with the <code>play(track)</code> instead of <code>solo(track)</code>
+the <code>WavTrigger</code> is in polyphonic mode where up to 14 tracks can be played at the
+same time. Each call to <code>play()</code> starts a new track while the others keep
+playing. All playing tracks can be can be stopped with the <code>stopAll()</code> command.</p>
+<div class="highlight"><pre>&gt;&gt;&gt;#play a strange chord
+&gt;&gt;&gt;wt.play(2);wt.play(5);wt.play(9)
+&gt;&gt;&gt;#Wait a little; then stop all tracks
+&gt;&gt;&gt;wt.stopAll()
+</pre></div>
+
+
+<p>This little example starts 3 tracks and after a while all tracks are stopped. A
+little problem with this code is that the three tracks do not start in sync with
+each other. The library still has to send out 3 commands to the <code>WavTrigger</code> and
+there is a delay of a few milliseconds between the tracks. But there is a
+solution to this. </p>
+<p>The library provides methods to play tracks in sync with each other. The idea is
+to load the tracks into memory and pause them immediately. Then all tracks are
+started with a single command <code>resumeAll()</code>.</p>
+<div class="highlight"><pre>&gt;&gt;&gt; #load the tracks
+&gt;&gt;&gt; wt.load(2)
+&gt;&gt;&gt; wt.load(5)
+&gt;&gt;&gt; wt.load(9)
+&gt;&gt;&gt; #all tracks are waiting to be played
+&gt;&gt;&gt; wt.resumeAll()
+&gt;&gt;&gt; #wait a bit
+&gt;&gt;&gt; wt.stopAll()
+</pre></div>
+
+
+<h3>Check the status of playing tracks.</h3>
+<p>Sometimes you might need to know if the <code>WavTrigger</code> is currently playing any
+tracks. You can call the <code>playing()</code> method any time and it returns a list of the
+tracks that the <code>WavTrigger</code> plays. If the list is empty no tracks are playing.</p>
+<div class="highlight"><pre>&gt;&gt;&gt; wt.play(1);wt.play(2);wt.play(3)
+&gt;&gt;&gt; wt.playing()
+[0, 1, 2]
+</pre></div>
+
+
+<p>Here we started 3 tracks and called <code>playing()</code> while they are still on. As you
+can see the list contains tree track numbers. </p>
+<p><strong>Note</strong> </p>
+<blockquote>
+<p>For some strange reason the <code>WavTrigger</code> returns the track number value <code>-1</code>?
+I don't want to change that yet, I'll ask the maker of the <code>WavTrigger</code>....</p>
+</blockquote>
+<p>A simple test if <em>any</em> track is playing would be </p>
+<div class="highlight"><pre>&gt;&gt;&gt;if(len(wt.playing())==0:
+&gt;&gt;&gt;    #do something
+</pre></div>
+
+
+<h2>Looping tracks</h2>
+<p>The <code>WavTrigger</code> can set a loop flag for tracks. When the flag is set with
+<code>loop(track)</code> the track will repeat forever once its started. The loop flag is
+not cleared by a <code>stop()</code> command. If the track is restarted later it will still
+be in loop mode. Only a explicit call to <code>unLoop(track)</code> clears the flag.</p>
+<div class="highlight"><pre>&gt;&gt;&gt; wt.loop(2)
+&gt;&gt;&gt; wt.loop(5)
+&gt;&gt;&gt; wt.loop(9)
+&gt;&gt;&gt; wt.play(2);wt.play(5);wt.play(9)
+&gt;&gt;&gt; #Wait a little
+&gt;&gt;&gt; wt.stopAll()
+&gt;&gt;&gt; wt.play(5) #still plays in loop mode
+&gt;&gt;&gt; wt.unLoop(5) #track plays to the end and stops
+</pre></div>
+
+
+<h2><a id="Volume"></a>Volume settings</h2>
+<p>The <code>WavTrigger</code> supports independent volume settings for each track and a master
+volume for the output. The <a href="http://robertsonics.com/wav-trigger-online-user-guide/#chapter7">users
+guide</a> says
+about this: </p>
+<blockquote>
+<p><strong>Initial Volume:</strong> This gain will be applied to the final mix output of the WAV
+Trigger, until overridden by a volume command. The range is -80dB to +10dB,
+and the default value is 0dB (unity gain). This gain affects the final output
+mix of the WAV Trigger, not the individual tracks that make up the mix.</p>
+</blockquote>
+<p>When I started to experiment with the <code>WavTrigger</code> volume settings I created a
+few test files that used the full range of values a signal can have in a
+<code>wav</code>-file. Playing these tracks with the default settings of the <code>WavTrigger</code>
+produced a nice clean sinus output.  When I raised the gain of the master output
+to +3dB very awful distorsion noise was added to the signal. When I raised the
+level to +6dB some protection circuit in my bluetooth speaker switched it off. </p>
+<p>When I implemented the commands for volume settings on the <code>WavTrigger</code> I decided to
+create 2 groups of commands <code>volume</code> and <code>gain</code>.  </p>
+<p>The <code>masterVolume(value)</code> and the <code>trackVolume(track,value)</code> set the volume from
+a range of <code>0..100</code>. A level of <code>100</code> sets the gain for the track or the output
+to 0dB. The good thing about this is if your original signal is free from
+distorsion you will never get any distorsion on the output. If you prepare the
+tracks on the SD-Card by normalizing them to 0dB there is no need for an
+amplification of the signal. </p>
+<p>But if you prefer to use the original gain settings the <code>WavTrigger</code> offers the
+<code>masterGain(value)</code> and <code>trackGain(track, value)</code> methods are there too.</p>
+<div class="highlight"><pre>&gt;&gt;&gt; wt.trackVolume(1,50)
+&gt;&gt;&gt; wt.play(1)
+&gt;&gt;&gt; wt.trackVolume(5,70)
+&gt;&gt;&gt; wt.play(5)
+&gt;&gt;&gt; #No play the mix
+&gt;&gt;&gt; wt.play(1);wt.play(5)
+</pre></div>
+
+
+<p><strong>Dont do this with headphones!</strong></p>
+<div class="highlight"><pre>&gt;&gt;&gt; wt.masterGain(5)
+&gt;&gt;&gt; wt.trackGain(1,0)
+&gt;&gt;&gt; wt.trackGain(5,3)
+&gt;&gt;&gt; wt.play(1);wt.play(5)
+</pre></div>
+
+
+<h3>Fading</h3>
+<p>The <code>WavTrigger</code> has two more volume related commands to offer. The <code>fade(track,
+volume, duration)</code> command fades the volume of a certain track to a new level in
+a given timespan.  The <code>fadeOut(track,duration)</code> command fades the volume of a
+track to 0 in a given timespan and then stops the track.</p>
+<div class="highlight"><pre>&gt;&gt;&gt; wt.trackVolume(80,0) #Volume=0 for track 80
+&gt;&gt;&gt; wt.play(80)          #starts playing, but we hear nothing
+&gt;&gt;&gt; wt.fade(80,100,2000) #fade to max in 2000 milliseconds
+&gt;&gt;&gt; wt.fadeOut(80,2000)  #fade out and stop the track
+</pre></div>
+
+
+<h2><a id="Pitch"></a>Pitch</h2>
+<blockquote>
+<p>This function is not available in the firmware version the <code>WavTrigger</code> shipped
+in Spring 2015. You need a version &gt;= 1.10, an update utility and instructions
+are on the
+<a href="http://robertsonics.com/wav-trigger-online-user-guide/#chapter11">RobertSonics</a>
+website.</p>
+</blockquote>
+<p>With the new firmware installed you can change the pitch of the output signal of
+the <code>WavTrigger</code>. There is no way to change the pitch of an individual track.
+Technically the samplerate of the audio engine is set but musically the height
+of the tone changes so I called the method <code>pitch(value)</code>.  </p>
+<div class="highlight"><pre>&gt;&gt;&gt; pitch(-37767) #Pitch down
+&gt;&gt;&gt; play(80)
+&gt;&gt;&gt; pitch(37767)  #Pitch up
+&gt;&gt;&gt; play(80)
+&gt;&gt;&gt;
+&gt;&gt;&gt; def jitter():
+...     for i in range(37760,-37760,-10):
+...         wt.pitch(i)
+&gt;&gt;&gt; wt.play(80)
+&gt;&gt;&gt; jitter() #Pitch down while playing the tracks 
+&gt;&gt;&gt; pitch(0) #restore original pitch level
+</pre></div>
+
+
+<h2><a id="Close"></a>Closing the connection</h2>
+<p>When the connection closed the <code>WavTrigger</code> will not stop any playing tracks.
+Any other configuration changes you made like setting the volume level or
+setting the loop status for tracks are still in effect. </p>
+<p>This track will play <strong>forever</strong>! (or at least until you pull the plug on the
+<code>WavTrigger</code>)</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">rswt</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">=</span><span class="n">rswt</span><span class="o">.</span><span class="n">WavTrigger</span><span class="p">(</span><span class="s">&#39;/dev/ttyUSB0&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+ 
+            </div>
+<div id="footer">
+     <div class="footer-info-item">
+         <p><span class="bold">Contact </span><a href="https://github.com/wayoda/rswt"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/github-dark-20.png" alt="rswt on Github">rswt Project on Github</a><a href="mailto:e.fahle@wayoda.org"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/mail-dark-20.png" alt="E-Mail">e.fahle@wayoda.org</a></p>
+         <p><span class="bold">rswt </span>Current version: 0.1.0 &ndash; &copy; 2015 Eberhard Fahle</p>
+     </div>
+</div>
+    </div> 
+    </body>
+</html>

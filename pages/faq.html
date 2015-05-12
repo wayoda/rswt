@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="en">
+    <head>
+        <title>rswt.py</title>
+        <meta charset="utf-8" />
+        <meta name="author" content="Eberhard Fahle" />
+        <!-- Enable responsiveness on mobile devices-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+        <link rel="stylesheet" href="http://wayoda.github.io/rswt/theme/css/style.css" type="text/css" />
+
+            <link rel="stylesheet" href="http://wayoda.github.io/rswt/theme/css/github.css" type="text/css" />
+    
+        <link href="http://fonts.googleapis.com/css?family=Gentium+Book Basic:400italic,400,700italic,700" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata&subset=latin-ext' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="container">
+<div id="header">
+    <div id="header-left" >
+        <span class="header-title"><a href="http://wayoda.github.io/rswt/index.html">rswt.py</a></span>
+        </br>
+        <span class="header-description">A python library for the RobertSonics WavTrigger</span>
+    </div>
+    <div id="header-nav">
+        <ul>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/index.html">Home</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/tutorial.html">Tutorial</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/api.html">API</a></li>
+            <li><a class="sidebar-menu-item active" href="http://wayoda.github.io/rswt/pages/faq.html">FAQ</a></li>
+        </ul>
+    </div>
+</div>
+<div class="clear"></div>
+<hr class="hr-top">               <div id="content">
+<div class="page">
+    <div id="page-menu">
+        <ul>
+            <li><a href="#Tech">Technical Questions</a></li>
+         </ul>
+    </div>
+<h1>FAQ</h1>
+<p>Here are a few questions turn up from time to time... </p>
+<h2><a id="Tech"></a>Technical Questions</h2>
+<p><strong><em>Track doesn't play; it works on my desktop machine!</em></strong></p>
+<p>I had this problem with a test signal generated with <a href="http://web.audacityteam.org/">Audacity</a>. The default settings of <code>Audacity</code> generate a mono signal which is encoded in a mono <code>wav</code> file on export. For some reason the <code>WavTrigger</code> was unwilling to play that file. I was expecting to be tortured by weird distortion when trying to play broken files. I was very surprised that it didn't play at all.</p>
+<p><strong><em>On Linux I can open the serial port from more than one application at the same time!</em></strong></p>
+<p>Yes, True. This might cause havoc on the read operations from the WavTrigger.
+There are <a href="http://stackoverflow.com/questions/19809867/how-to-check-if-serial-port-is-already-open-by-another-process-in-linux-using">solutions for this
+problem</a> but they are not portable across other
+OS platforms. </p>
+</div>
+ 
+            </div>
+<div id="footer">
+     <div class="footer-info-item">
+         <p><span class="bold">Contact </span><a href="https://github.com/wayoda/rswt"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/github-dark-20.png" alt="rswt on Github">rswt Project on Github</a><a href="mailto:e.fahle@wayoda.org"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/mail-dark-20.png" alt="E-Mail">e.fahle@wayoda.org</a></p>
+         <p><span class="bold">rswt </span>Current version: 0.1.0 &ndash; &copy; 2015 Eberhard Fahle</p>
+     </div>
+</div>
+    </div> 
+    </body>
+</html>

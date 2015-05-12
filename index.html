@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="en">
+    <head>
+        <title>rswt.py</title>
+        <meta charset="utf-8" />
+        <meta name="author" content="Eberhard Fahle" />
+        <!-- Enable responsiveness on mobile devices-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+        <link rel="stylesheet" href="http://wayoda.github.io/rswt/theme/css/style.css" type="text/css" />
+
+            <link rel="stylesheet" href="http://wayoda.github.io/rswt/theme/css/github.css" type="text/css" />
+    
+        <link href="http://fonts.googleapis.com/css?family=Gentium+Book Basic:400italic,400,700italic,700" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata&subset=latin-ext' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="container">
+<div id="header">
+    <div id="header-left" >
+        <span class="header-title"><a href="http://wayoda.github.io/rswt/index.html">rswt.py</a></span>
+        </br>
+        <span class="header-description">A python library for the RobertSonics WavTrigger</span>
+    </div>
+    <div id="header-nav">
+        <ul>
+            <li><a class="sidebar-menu-item active" href="http://wayoda.github.io/rswt/index.html">Home</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/tutorial.html">Tutorial</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/api.html">API</a></li>
+            <li><a class="sidebar-menu-item " href="http://wayoda.github.io/rswt/pages/faq.html">FAQ</a></li>
+        </ul>
+    </div>
+</div>
+<div class="clear"></div>
+<hr class="hr-top">               <div id="content">
+<div class="page">
+    <div id="page-menu">
+        <ul>
+            <li><a href="#Download">Download</a></li>
+            <li><a href="Quickstart">Quickstart</a></li>
+            <li><a href="#Bugs">Known Bugs</a></li>
+            <li><a href="#Feedback">Feedback</a></li>
+         </ul>
+    </div>
+<h1>rswt.py</h1>
+<p><code>rswt</code> is a python library for the <a href="http://robertsonics.com/wav-trigger/">RobertSonics Wav
+Trigger</a> audio player. Individual tracks
+can be triggered by 16 digitial inputs. Full control of the player is
+possible with a <a href="http://robertsonics.com/2014/10/19/turn-the-rockband-3-keyboard-into-a-sampling-instrument-with-the-wav-trigger/">Midi controller</a> or through the serial port interface of the <code>WavTrigger</code>.</p>
+<p><img alt="image" src="/rswt/images/board.png" /></p>
+<p>The <code>rswt</code> library makes all of the audio player commands available to your python
+code. </p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">rswt</span> <span class="kn">import</span> <span class="n">WavTrigger</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">=</span><span class="n">WavTrigger</span><span class="p">(</span><span class="s">&#39;/dev/ttyUSB0&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">stopAll</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+
+<h2><a id="Download"></a> Download and install</h2>
+<p>The source code for the project is on <a href="https://github.com/wayoda/rswt">Github</a>. 
+Python 2 code using the library needs to be at 2.7. Python 3 code is supported
+for all versions &gt;= 3.3.</p>
+<h3>Install from Github</h3>
+<p>The latest version of the library is always on the <a href="https://github.com/wayoda/rswt/releases">rswt release
+page</a>. The code for the project
+is in a single file : <code>rswt.py</code>. </p>
+<p>Download and unzip <code>rswt-&lt;version&gt;.zip</code> file which is tagged as <code>Latest
+release</code>. Add the <code>rswt.py</code> file to your project sources and you're done.  </p>
+<p><code>rswt</code> requires the <a href="https://pypi.python.org/pypi/pyserial/2.7">pyserial</a>
+library to be available on the system.</p>
+<h3>Install from PiPY</h3>
+<p>The latest release of the module is also on PyPI. Install the module with</p>
+<blockquote>
+<p><code>pip install rswt</code></p>
+</blockquote>
+<p>For developing with Python 3 code run</p>
+<blockquote>
+<p><code>pip3 install rswt</code></p>
+</blockquote>
+<p>Installation using <code>pip</code> will automatically install the <code>pyserial</code> library if it
+is not found on the target system. </p>
+<h2><a id="Quickstart"></a> Quickstart</h2>
+<p>Install the library and </p>
+<ul>
+<li>do the <a href="/rswt/pages/tutorial">Tutorial</a></li>
+<li>read the <a href="/rswt/pages/code">Library function documentation</a></li>
+<li>still questions? <a href="/rswt/pages/faq">(Not so) Frequently asked questions</a></li>
+</ul>
+<h2><a id="Bugs"></a> Known bugs</h2>
+<p>Currently none (tested on Linux kubuntu 15.04)</p>
+<h2>Revision History</h2>
+<p><em>May 2, 2015</em> :   First public release</p>
+<h2><a id="Feedback"></a>Feedback</h2>
+<p>If you find an error or if you are looking for a special feature not yet covered
+in the existing code, please open a new issue on the <a href="https://github.com/wayoda/rswt/issues">github project
+page</a>. If you don't
+have a github account (and don't want one) send your questions, objections or
+corrections to <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#101;&#46;&#102;&#97;&#104;&#108;&#101;&#64;&#119;&#97;&#121;&#111;&#100;&#97;&#46;&#111;&#114;&#103;">&#101;&#46;&#102;&#97;&#104;&#108;&#101;&#64;&#119;&#97;&#121;&#111;&#100;&#97;&#46;&#111;&#114;&#103;</a></p>
+<h3>License (The software)</h3>
+<p>The sourcecode for this library is released under the Terms of a <a href="https://github.com/wayoda/rswt/blob/master/LICENSE">MIT-style
+license</a></p>
+</div>
+ 
+            </div>
+<div id="footer">
+     <div class="footer-info-item">
+         <p><span class="bold">Contact </span><a href="https://github.com/wayoda/rswt"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/github-dark-20.png" alt="rswt on Github">rswt Project on Github</a><a href="mailto:e.fahle@wayoda.org"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/mail-dark-20.png" alt="E-Mail">e.fahle@wayoda.org</a></p>
+         <p><span class="bold">rswt </span>Current version: 0.1.0 &ndash; &copy; 2015 Eberhard Fahle</p>
+     </div>
+</div>
+    </div> 
+    </body>
+</html>
