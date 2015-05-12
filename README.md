@@ -16,12 +16,23 @@ Documentation for the library is [here](http://wayoda.github.io/rswt/)
 guide](http://robertsonics.com/wav-trigger-online-user-guide/) for the
 WavTrigger.
 
+##Install from PyPI
+
+`pip install rswt`
+
+or 
+
+`pip3 install rswt`
+
+
 ##Install from github
 
 The `rswt` library consists of just a single file `rwst.py`.  The [PySerial
 library](http://pyserial.sourceforge.net/) must be installed too.  The latest
 official release is always on the [rswt release
 pages](https://github.com/wayoda/rswt/releases).
+
+##Run 
 
 Drop the `rswt.py` file into your code folder and start using it
 
@@ -32,13 +43,4 @@ Drop the `rswt.py` file into your code folder and start using it
 'WAV Trigger v1.10'
 >>> wt.close()
 ``` 
-
-##Install with `pip` 
-
-> `pip install rswt`
-
-or 
-
-> `pip3 install rswt`
-
 
