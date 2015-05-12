@@ -6,9 +6,8 @@ from __future__ import absolute_import, division, print_function
 from os import errno
 import serial
 import struct
-import binascii
 
-__version__ = '0.1.5'
+__version__ = '0.1.0'
 __author__ = 'Eberhard Fahle'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2015 Eberhard Fahle'

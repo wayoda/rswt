@@ -6,7 +6,7 @@ The `RobertSonics WavTrigger`_ is an audio player for wave files. Audio playback
 
 Documentation
 -------------
-Documentation for the library is **Not Yet here**
+Documentation for the library is on the `Github project page`_
 
 A users guide for the WavTrigger is on the `RobertSonics website`_
 
@@ -26,6 +26,7 @@ Source code
 The project is hosted on `Github`_
 
 
+.. _`Github project page` : http://wayoda.github.io/rswt/
 .. _`RobertSonics WavTrigger` : http://robertsonics.com/wav-trigger/
 .. _`python serial library` : http://pyserial.sourceforge.net 
 .. _`RobertSonics website` : http://robertsonics.com/wav-trigger-online-user-guide
