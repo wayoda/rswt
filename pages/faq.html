@@ -41,15 +41,23 @@
          </ul>
     </div>
 <h1>FAQ</h1>
-<p>Here are a few questions turn up from time to time... </p>
+<p>Here are a few (made up) questions. I will extend this section if necessary... </p>
 <h2><a id="Tech"></a>Technical Questions</h2>
 <p><strong><em>Track doesn't play; it works on my desktop machine!</em></strong></p>
-<p>I had this problem with a test signal generated with <a href="http://web.audacityteam.org/">Audacity</a>. The default settings of <code>Audacity</code> generate a mono signal which is encoded in a mono <code>wav</code> file on export. For some reason the <code>WavTrigger</code> was unwilling to play that file. I was expecting to be tortured by weird distortion when trying to play broken files. I was very surprised that it didn't play at all.</p>
+<p>I had this problem with a test signal generated with
+<a href="http://web.audacityteam.org/">Audacity</a>. The default settings of <code>Audacity</code>
+generate a mono signal which is encoded in a mono <code>wav</code> file on export. For some
+reason the <code>WavTrigger</code> was unwilling to play that file. I was expecting to be
+tortured by weird distortion when trying to play broken files. To my surprise
+the track didn't play at all. </p>
+<ul>
+<li>Make sure your tracks are 2 channel <strong>stereo</strong> <code>wav</code>-files</li>
+</ul>
 <p><strong><em>On Linux I can open the serial port from more than one application at the same time!</em></strong></p>
 <p>Yes, True. This might cause havoc on the read operations from the WavTrigger.
 There are <a href="http://stackoverflow.com/questions/19809867/how-to-check-if-serial-port-is-already-open-by-another-process-in-linux-using">solutions for this
-problem</a> but they are not portable across other
-OS platforms. </p>
+problem</a>
+but they are not portable across other OS platforms. </p>
 </div>
  
             </div>

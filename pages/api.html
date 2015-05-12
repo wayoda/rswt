@@ -57,12 +57,12 @@ arguments. </dd>
 <li><strong><code>timeout</code></strong> - timeout for reading from the serial port</li>
 <li><strong><code>baud</code></strong> - baudrate for the serial port</li>
 </ul>
-<p><strong><em>Raises</em></strong> : <code>OSError</code><br />
+<p><strong>Raises : <code>OSError</code></strong><br />
 if opening the serial port failed, or reading from the <code>WavTrigger</code> times out</p>
 <h2><a id="properties"></a> WavTrigger properties</h2>
 <dl>
 <dt><code>WavTrigger.version</code></dt>
-<dd>The version striung returned from the device  </dd>
+<dd>The version string returned from the device  </dd>
 <dt><code>WavTrigger.voices</code></dt>
 <dd>The number of polyphonic voices the <code>WavTrigger</code>
 supports  </dd>
@@ -74,12 +74,12 @@ supports  </dd>
 <dt><code>play(track)</code></dt>
 <dd>Play a track from the SD-Card using one of the polyphonic voices of a <code>WavTrigger</code>  </dd>
 <dt><code>solo(track)</code></dt>
-<dd>Play a solo track from the SD-Card. Stops all polyphonic voices and plays the solo.  </dd>
+<dd>Play a solo track from the SD-Card. Stops all polyphonic voices and plays the track in solo mode.  </dd>
 <dt><code>pause(track)</code></dt>
 <dd>Pause a playing track.  </dd>
 <dt><code>resume(track)</code></dt>
 <dd>Resume a paused track.</dd>
-<dt>`stop(track)</dt>
+<dt><code>stop(track)</code></dt>
 <dd>Stop a playing track</dd>
 <dt><code>load(track)</code></dt>
 <dd>load a track into memory and pause it. Tracks loaded with this method can be
@@ -97,9 +97,8 @@ restarted after a <code>stop(track)</code> or <code>stopAll()</code> command.</d
 is called the track will play to the end and then stop.</dd>
 <dt><code>playing()</code></dt>
 <dd>reads a list of the currently playing tracks from the <code>WavTrigger</code>. If no
-tracks are playing the empty list is returned.  </dd>
-<dt><strong><em>Raises</em></strong> : <code>OSError</code></dt>
-<dd>If the <code>WavTrigger</code> does not return valid data is the timespan set by the timeout an Exception is raised.</dd>
+tracks are playing the empty list is returned.<br />
+<strong>Raises : <code>OSError</code></strong> if the <code>WavTrigger</code> does not return valid data in the timespan set by the timeout.</dd>
 </dl>
 <h2><a id="gain"></a> Gain/Volume</h2>
 <dl>
