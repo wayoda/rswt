@@ -1,0 +1,14 @@
+2015-05-18 Eberhard Fahle <e.fahle@wayoda.org>
+	* rswt.py : remove upper limit for valid track numbers. 
+	The WavTrigger firmware version 1.21 raised the upper 
+	value to 2048. A test is not really needed for this.
+
+	* documentation : Explain why the firmware of the wavtrigger
+	should be updated to version 1.21+
+	
+	* version : push version on PyPI, to make it compatible with
+	firmware versions 1.21+
+
+	* this : add a good old changelog to the project
+
+
