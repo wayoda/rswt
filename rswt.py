@@ -7,7 +7,7 @@ from os import errno
 import serial
 import struct
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 __author__ = 'Eberhard Fahle'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2015 Eberhard Fahle'
@@ -389,7 +389,7 @@ class WavTrigger(object):
     def _isValidTrackNumber(self,track):
         """Simple test for valid track numbers
         """
-        if track>0 and track<1000:
+        if track>0:
             return True
         return False
 
