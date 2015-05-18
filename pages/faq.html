@@ -43,8 +43,8 @@
 <h1>FAQ</h1>
 <p>Here are a few (made up) questions. I will extend this section if necessary... </p>
 <h2><a id="Tech"></a>Technical Questions</h2>
-<p><strong><em>Track doesn't play; it works on my desktop machine!</em></strong></p>
-<p>I had this problem with a test signal generated with
+<p><strong><em>Track doesn't play; it works on my desktop machine!</em></strong><br />
+I had this problem with a test signal generated with
 <a href="http://web.audacityteam.org/">Audacity</a>. The default settings of <code>Audacity</code>
 generate a mono signal which is encoded in a mono <code>wav</code> file on export. For some
 reason the <code>WavTrigger</code> was unwilling to play that file. I was expecting to be
@@ -53,8 +53,12 @@ the track didn't play at all. </p>
 <ul>
 <li>Make sure your tracks are 2 channel <strong>stereo</strong> <code>wav</code>-files</li>
 </ul>
-<p><strong><em>On Linux I can open the serial port from more than one application at the same time!</em></strong></p>
-<p>Yes, True. This might cause havoc on the read operations from the WavTrigger.
+<p><strong><em>The <code>playing()</code> method returns the wrong tracknumbers!</em></strong><br />
+This is a <a href="https://github.com/wayoda/rswt/issues/1">bug</a> that was fixed with
+<code>version 1.21</code> of the <code>WavTrigger</code> firmware. Boards shipped in 2014/2015 need to
+be updated to a firmware version &gt;=<code>1 .21</code>. </p>
+<p><strong><em>On Linux I can open the serial port from more than one application at the same time!</em></strong><br />
+Yes, True. This might cause havoc on the read operations from the WavTrigger.
 There are <a href="http://stackoverflow.com/questions/19809867/how-to-check-if-serial-port-is-already-open-by-another-process-in-linux-using">solutions for this
 problem</a>
 but they are not portable across other OS platforms. </p>

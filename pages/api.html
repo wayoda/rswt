@@ -96,9 +96,10 @@ restarted after a <code>stop(track)</code> or <code>stopAll()</code> command.</d
 <dd>stop playing a track in a loop. If the track is playing when <code>unLoop(track)</code>
 is called the track will play to the end and then stop.</dd>
 <dt><code>playing()</code></dt>
-<dd>reads a list of the currently playing tracks from the <code>WavTrigger</code>. If no
+<dd>returns a list of the currently playing tracks from the <code>WavTrigger</code>. If no
 tracks are playing the empty list is returned.<br />
-<strong>Raises : <code>OSError</code></strong> if the <code>WavTrigger</code> does not return valid data in the timespan set by the timeout.</dd>
+<strong>Raises : <code>OSError</code></strong> if the <code>WavTrigger</code> does not return valid data in the
+timespan set by the timeout.</dd>
 </dl>
 <h2><a id="gain"></a> Gain/Volume</h2>
 <dl>

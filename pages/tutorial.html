@@ -193,7 +193,7 @@ tracks. You can call the <code>playing()</code> method any time and it returns a
 tracks that the <code>WavTrigger</code> plays. If the list is empty no tracks are playing.</p>
 <div class="highlight"><pre>&gt;&gt;&gt; wt.play(1);wt.play(2);wt.play(3)
 &gt;&gt;&gt; wt.playing()
-[0, 1, 2]
+[1, 2, 3]
 </pre></div>
 
 
@@ -201,8 +201,12 @@ tracks that the <code>WavTrigger</code> plays. If the list is empty no tracks ar
 can see the list contains tree track numbers. </p>
 <p><strong>Note</strong> </p>
 <blockquote>
-<p>For some strange reason the <code>WavTrigger</code> returns the track number value <code>-1</code>?
-I don't want to change that yet, I'll ask the maker of the <code>WavTrigger</code>....</p>
+<p>There is a bug in the original firmware (<code>version 1.00</code>) of the <code>WavTrigger</code> which
+shipped in 2014/2015.<br />
+The <code>playing()</code> method returns the track number values
+<strong>-1</strong>. The return value of the above example would be <code>[0,1,2]</code> instead of
+<code>[1,2,3]</code>. This bug is fixed with the <code>WavTrigger</code> <a href="http://robertsonics.com/wav-trigger-downloads/">firmware update
+<code>1.21</code></a></p>
 </blockquote>
 <p>A simple test if <em>any</em> track is playing would be </p>
 <div class="highlight"><pre>&gt;&gt;&gt;if(len(wt.playing())==0:
