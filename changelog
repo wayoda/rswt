@@ -1,3 +1,9 @@
+2015-09-13 Eberhard Fahle <e.fahle@wayoda.org>
+	* rswt.py : Implemented commands to control the on-board
+	power amp.
+	
+	* version : push version on PyPi
+	
 2015-05-18 Eberhard Fahle <e.fahle@wayoda.org>
 	* rswt.py : remove upper limit for valid track numbers. 
 	The WavTrigger firmware version 1.21 raised the upper 
