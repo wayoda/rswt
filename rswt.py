@@ -7,7 +7,7 @@ from os import errno
 import serial
 import struct
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __author__ = 'Eberhard Fahle'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2015 Eberhard Fahle'
@@ -385,6 +385,21 @@ class WavTrigger(object):
         for i in range(len(tracks)):
             trackList.append(self._lsbToInt(tracks[i]))
         return trackList 
+
+    def amplifierOn(self):
+        """Switch the on-board amplifier on.
+        """
+        data=_WT_AMP_POWER
+        data[4]=0x01
+        self._wt.write(data)
+
+
+    def amplifierOff(self):
+        """Switch the on-board amplifier off.
+        """
+        data=_WT_AMP_POWER
+        data[4]=0x00
+        self._wt.write(data)
 
     def _isValidTrackNumber(self,track):
         """Simple test for valid track numbers
