@@ -74,17 +74,47 @@ supports  </dd>
 <dl>
 <dt><code>play(track)</code></dt>
 <dd>Play a track from the SD-Card using one of the polyphonic voices of a <code>WavTrigger</code>  </dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+</ul>
+<dl>
 <dt><code>solo(track)</code></dt>
 <dd>Play a solo track from the SD-Card. Stops all polyphonic voices and plays the track in solo mode.  </dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+</ul>
+<dl>
 <dt><code>pause(track)</code></dt>
 <dd>Pause a playing track.  </dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+</ul>
+<dl>
 <dt><code>resume(track)</code></dt>
 <dd>Resume a paused track.</dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+</ul>
+<dl>
 <dt><code>stop(track)</code></dt>
 <dd>Stop a playing track</dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+</ul>
+<dl>
 <dt><code>load(track)</code></dt>
 <dd>load a track into memory and pause it. Tracks loaded with this method can be
 played in sync when started with <code>resumeAll()</code></dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+</ul>
+<dl>
 <dt><code>resumeAll()</code></dt>
 <dd>start playing tracks that where loaded into memory with the <code>load(track)</code>
 method.</dd>
@@ -93,9 +123,19 @@ method.</dd>
 <dt><code>loop(track)</code></dt>
 <dd>loop the track when playing. The track will play in a loop even if it is
 restarted after a <code>stop(track)</code> or <code>stopAll()</code> command.</dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+</ul>
+<dl>
 <dt><code>unLoop(track)</code></dt>
 <dd>stop playing a track in a loop. If the track is playing when <code>unLoop(track)</code>
 is called the track will play to the end and then stop.</dd>
+</dl>
+<ul>
+<li><code>track</code> - the number of the track</li>
+</ul>
+<dl>
 <dt><code>playing()</code></dt>
 <dd>returns a list of the currently playing tracks from the <code>WavTrigger</code>. If no
 tracks are playing the empty list is returned.<br />
