@@ -42,6 +42,7 @@
             <li><a href="#Play">Play</a></li>
             <li><a href="#Volume">Volume</a></li>
             <li><a href="#Pitch">Pitch</a></li>
+            <li><a href="#Amp">Amplifier</a></li>
             <li><a href="#Close">Shutting down</a></li>
          </ul>
     </div>
@@ -266,7 +267,7 @@ amplification of the signal. </p>
 </pre></div>
 
 
-<p><strong>Dont do this with headphones!</strong></p>
+<p><strong>Don't do this while listening over headphones!</strong></p>
 <div class="highlight"><pre>&gt;&gt;&gt; wt.masterGain(5)
 &gt;&gt;&gt; wt.trackGain(1,0)
 &gt;&gt;&gt; wt.trackGain(5,3)
@@ -298,20 +299,40 @@ website.</p>
 the <code>WavTrigger</code>. There is no way to change the pitch of an individual track.
 Technically the samplerate of the audio engine is set but musically the height
 of the tone changes so I called the method <code>pitch(value)</code>.  </p>
-<div class="highlight"><pre>&gt;&gt;&gt; pitch(-37767) #Pitch down
-&gt;&gt;&gt; play(80)
-&gt;&gt;&gt; pitch(37767)  #Pitch up
-&gt;&gt;&gt; play(80)
+<div class="highlight"><pre>&gt;&gt;&gt; wt.pitch(-37767) #Pitch down
+&gt;&gt;&gt; wt.play(80)
+&gt;&gt;&gt; wt.pitch(37767)  #Pitch up
+&gt;&gt;&gt; wt.play(80)
 &gt;&gt;&gt;
 &gt;&gt;&gt; def jitter():
 ...     for i in range(37760,-37760,-10):
 ...         wt.pitch(i)
 &gt;&gt;&gt; wt.play(80)
 &gt;&gt;&gt; jitter() #Pitch down while playing the tracks 
-&gt;&gt;&gt; pitch(0) #restore original pitch level
+&gt;&gt;&gt; wt.pitch(0) #restore original pitch level
 </pre></div>
 
 
+<h2><a id="Amp"></a>The onboard amplifier</h2>
+<p>The <code>WavTrigger</code> is equipped with an 2W mono amp. Connect a speaker
+and switch the amplifier <code>On</code> or <code>Off</code> from your code.</p>
+<blockquote>
+<p><strong>Note</strong>: The very first batch of <code>WavTrigger</code> boards that were produced had a<br />
+hardware problem with the onboard amp. This was fixed in later versions.
+Please read this <a href="http://robertsonics.com/2015/05/16/update-on-wav-trigger-hardware-versions/">blog post about the
+problem</a> 
+<em>before</em> you switch the onboard amplifier on for the first time!   </p>
+</blockquote>
+<div class="highlight"><pre>&gt;&gt;&gt; wt.amplifierOn()
+&gt;&gt;&gt; wt.play(1)
+&gt;&gt;&gt; #Let it play a while 
+&gt;&gt;&gt; wt.amplifierOff()
+&gt;&gt;&gt; #silence   
+</pre></div>
+
+
+<p>Switching the onboard amplifier <code>On</code> or <code>Off</code> has no effect on the signal 
+on the output jack. There is no way to switch the line-out signal off.</p>
 <h2><a id="Close"></a>Closing the connection</h2>
 <p>When the connection closed the <code>WavTrigger</code> will not stop any playing tracks.
 Any other configuration changes you made like setting the volume level or
@@ -330,7 +351,7 @@ setting the loop status for tracks are still in effect. </p>
 <div id="footer">
      <div class="footer-info-item">
          <p><span class="bold">Contact </span><a href="https://github.com/wayoda/rswt"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/github-dark-20.png" alt="rswt on Github">rswt Project on Github</a><a href="mailto:e.fahle@wayoda.org"><img class="icon" src="http://wayoda.github.io/rswt/theme/images/mail-dark-20.png" alt="E-Mail">e.fahle@wayoda.org</a></p>
-         <p><span class="bold">rswt </span>Current version: 0.1.0 &ndash; &copy; 2015 Eberhard Fahle</p>
+         <p><span class="bold">rswt </span>Current version: 0.1.2 &ndash; &copy; 2015 Eberhard Fahle</p>
      </div>
 </div>
     </div> 
